@@ -45,7 +45,7 @@ modtree --source path/to/source
 
 I recommend using watchexec to automatically run ModTree when files change, I use it like this:
 ```
-watchexec --timings --color=always --fs-events=create,remove,rename,modify --delay-run=200ms -w ./src -- modtree -s ./src
+watchexec -c --timings --color=always --fs-events=create,remove,rename,modify --delay-run=200ms -w ./src -- modtree -s ./src
 ``` 
 why?
 - `--timings` to see how long it takes to run, 'cause numbers are fun.
@@ -54,6 +54,7 @@ why?
 - `--delay-run=200ms` to wait for the filesystem to settle before running
 - `-w ./src` to watch the `./src` directory
 - `-- modtree -s ./src` to run ModTree with the specified source directory, I like to be explicit
+-- `-c` to clear the screen before running, if I want to see the output of previous runs, not the usual thing I do, but might as well
 
 ## Output
 
