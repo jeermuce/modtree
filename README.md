@@ -4,17 +4,17 @@ ModTree is a Rust utility that helps maintain module files in Rust projects by a
 
 ## Features
 
-- ✅ **Full Support**:
+- ✅ **Yes**:
   - Creating mod files for new Rust source files
   - Handling nested directories
     - Will ignore directories that contain no Rust source files
   - Adding appropriate `mod` statements for new files in existing mod directories
 
-- 🔄 **Partial Support**:
+- 🔄 **Kinda**:
   - Renaming files/directories (creates new mod entries but doesn't remove old ones)
   - Moving files/directories (creates new mod entries but doesn't remove old ones)
 
-- ❌ **Not Supported**:
+- ❌ **No**:
   - Old-style `mod.rs` files
   - Modifying files that are not modules (e.g. `lib.rs`, `main.rs`)
   - Removing mod statements or files
@@ -45,16 +45,15 @@ modtree --source path/to/source
 
 I recommend using watchexec to automatically run ModTree when files change, I use it like this:
 ```
-watchexec -c --timings --color=always --fs-events=create,remove,rename,modify --delay-run=200ms -w ./src -- modtree -s ./src
+watchexec --timings --color=always --fs-events=create,remove,rename --delay-run=100ms -w ./src -- modtree -s ./src
 ``` 
-why?
+
 - `--timings` to see how long it takes to run, 'cause numbers are fun.
 - `--color=always` to get colored output all the time
 - `--fs-events=create,remove,rename` so it only runs whene it has things to do because:  `remove mod statement -> modtree puts it back -> remove file -> remove statement -> modtree runs again` and that's annoying
-- `--delay-run=200ms` to wait for the filesystem to settle before running
+- `--delay-run=100ms` to wait for the filesystem to settle before running
 - `-w ./src` to watch the `./src` directory
 - `-- modtree -s ./src` to run ModTree with the specified source directory, I like to be explicit
--- `-c` to clear the screen before running, if I want to see the output of previous runs, not the usual thing I do, but might as well
 
 ## Output
 
