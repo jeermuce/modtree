@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 anyhow = "1.0.95"
 clap = { version = "4.5.23", features = ["derive"] }
+clearscreen = "4.0.0"
 colored = "2.2.0"
 
 [[bin]]

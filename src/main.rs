@@ -2,6 +2,7 @@ mod modules;
 mod utils;
 use anyhow::Result;
 use clap::Parser;
+use clearscreen::clear;
 use colored::Colorize;
 use modules::arguments::args;
 use modules::display::tree::get_tree;
@@ -42,6 +43,10 @@ fn main() -> Result<()> {
     let updated_files: HashSet<String> = parse_paths(output, "U");
     let created_files: HashSet<String> = parse_paths(output, "C");
 
+    if updated_files.is_empty() && created_files.is_empty() {
+        return Ok(());
+    }
+    clear()?;
     let tree = get_tree(&source, String::new(), &updated_files, &created_files)?;
 
     println!("{}\n{}", source_name, tree);
