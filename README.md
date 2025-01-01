@@ -112,7 +112,7 @@ Also feel free to offer constructive criticism, advice, suggestions, etc. I'm al
 
 I want to add these at some point, feel free to contribute if you want to see them sooner:
 
-- [ ] watchmode so you don't have to use watchexec
+- [ ] watchmode so I don't have to use watchexec
     - `-w` and `--watch` flags to enable this, default to not watching
 - [ ] Support for the older style of mod files (mod.rs in directory)
     - `-o` and `--old-style` flags to enable this, default to the newer style and `-n` and `--new-style` flags to be explicit about the newer style
@@ -120,6 +120,12 @@ I want to add these at some point, feel free to contribute if you want to see th
     - `-r` and `--remove` flags to enable this, default to not removing anything
 - [ ] Support for modifying files that are not modules (e.g. `lib.rs`, `main.rs`)
     - `-m` and `--main` flags to enable this, default to not modifying these files
+- [ ] Control over the output format
+    - `-f` and `--format` flags to enable this, default to the current format
+- [ ] Control over the depth of the output
+    - `-d` and `--depth` flags to enable this, default to showing the full tree
+
+
 
 ## Motivation
 
