@@ -1,8 +1,10 @@
+use crate::utils::file_utils::create::create_and_write_mod_file;
+use crate::utils::file_utils::find::has_rs_files;
+use crate::utils::file_utils::update::update;
 use anyhow::Result;
-use std::fs::{self, OpenOptions};
-use std::io::{self, Write};
+use std::fs::{self};
+use std::io::{self};
 use std::path::Path;
-
 pub fn ensure_mod_lines(path: &Path, source: &Path) -> Result<String, io::Error> {
     let mut creation_result = String::new();
     let mod_file_path = path
@@ -27,9 +29,9 @@ pub fn ensure_mod_lines(path: &Path, source: &Path) -> Result<String, io::Error>
         .collect();
 
     if mod_file_path.exists() {
+        // Edit the existing mod file
         let content = fs::read_to_string(&mod_file_path)?;
         let mut new_content = content.clone();
-
         for mod_line in &mod_lines {
             if !content.contains(mod_line) {
                 new_content.push_str(&format!("{}\n", mod_line));
@@ -45,10 +47,18 @@ pub fn ensure_mod_lines(path: &Path, source: &Path) -> Result<String, io::Error>
                     .to_string_lossy()
             );
 
-            fs::write(&mod_file_path, new_content)?;
+            update(mod_file_path, new_content)?;
         }
     } else if mod_file_path != source.with_extension("rs") {
-        creation_result = create_and_write_mod_file(&mod_file_path, &mod_lines.join("\n"))?;
+        // Create a new mod file, but not <source>.rs
+        creation_result = format!(
+            "C: {}",
+            mod_file_path
+                .file_name()
+                .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "File has no name"))?
+                .to_string_lossy()
+        );
+        create_and_write_mod_file(mod_file_path, mod_lines.join("\n"))?;
     }
 
     Ok(creation_result)
@@ -63,10 +73,7 @@ pub fn process_directory(
         return Ok(String::from("Path is not a directory"));
     }
 
-    if fs::read_dir(path)?.any(|res| {
-        res.ok()
-            .is_some_and(|e| super::file_utils::has_rs_files(&e.path()))
-    }) {
+    if fs::read_dir(path)?.any(|res| res.ok().is_some_and(|e| has_rs_files(&e.path()))) {
         let ensurer_result = ensure_mod_lines(path, source)?;
 
         if !ensurer_result.is_empty() {
@@ -75,28 +82,11 @@ pub fn process_directory(
 
         for entry in fs::read_dir(path)? {
             let entry = entry?.path();
-            if entry.is_dir() && super::file_utils::has_rs_files(&entry) {
+            if entry.is_dir() && has_rs_files(&entry) {
                 process_directory(&entry, source, output)?;
             }
         }
     }
 
     Ok(output.to_string())
-}
-
-fn create_and_write_mod_file(file_path: &Path, content: &str) -> Result<String, io::Error> {
-    let result = format!(
-        "C: {}",
-        file_path
-            .file_name()
-            .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "File has no name"))?
-            .to_string_lossy()
-    );
-    let mut file = OpenOptions::new()
-        .create(true)
-        .write(true)
-        .truncate(false)
-        .open(file_path)?;
-    writeln!(file, "{}", content)?;
-    Ok(result)
 }

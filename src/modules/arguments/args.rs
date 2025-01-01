@@ -1,6 +1,7 @@
-use crate::arguments::parse_path::parse_path;
 use clap::Parser;
 use std::path::PathBuf;
+
+use super::parse_path::parse_path;
 #[derive(Parser, Debug)]
 #[command(term_width = 0)]
 pub struct Args {

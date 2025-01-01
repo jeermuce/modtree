@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn parse_process_result(process_result: &str, action: &str) -> HashSet<String> {
+pub fn parse_paths(process_result: &str, action: &str) -> HashSet<String> {
     // Using a HashSet to avoid duplicates
     process_result
         .lines()

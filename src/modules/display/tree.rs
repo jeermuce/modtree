@@ -3,29 +3,8 @@ use colored::*;
 use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
-fn format_file(
-    file: &str,
-    updated_files: &HashSet<String>,
-    created_files: &HashSet<String>,
-) -> String {
-    if updated_files.contains(file) {
-        let file_str: String = format!(" {} ", file);
-        format!(
-            "{}{}",
-            file_str.bold().white().on_truecolor(180, 77, 0),
-            " [Updated] ".bold().truecolor(232, 97, 0)
-        )
-    } else if created_files.contains(file) {
-        let file_str: String = format!(" {} ", file);
-        format!(
-            "{}{}",
-            file_str.bold().on_truecolor(0, 150, 0),
-            " [Created] ".bold().green()
-        )
-    } else {
-        (file.yellow()).to_string()
-    }
-}
+
+use crate::utils::display_utils::format::format_file;
 
 pub fn get_tree(
     path: &Path,
@@ -33,16 +12,15 @@ pub fn get_tree(
     updated_files: &HashSet<String>,
     created_files: &HashSet<String>,
 ) -> Result<String> {
-    let mut output = String::new();
-    collect_tree(path, prefix, &mut output, updated_files, created_files)?;
-
-    Ok(output)
+    let mut tree = String::new();
+    collect_tree(path, prefix, &mut tree, updated_files, created_files)?;
+    Ok(tree)
 }
 
 fn collect_tree(
     path: &Path,
     prefix: String,
-    output: &mut String,
+    tree: &mut String,
     updated_files: &HashSet<String>,
     created_files: &HashSet<String>,
 ) -> Result<()> {
@@ -61,7 +39,7 @@ fn collect_tree(
                     .to_string_lossy()
                     .blue()
                     .bold();
-                output.push_str(&format!(
+                tree.push_str(&format!(
                     "{}{} {}\n",
                     prefix,
                     if is_last { "└──" } else { "├──" },
@@ -74,16 +52,15 @@ fn collect_tree(
                     format!("{}│   ", prefix)
                 };
 
-                collect_tree(&entry, new_prefix, output, updated_files, created_files)?;
+                collect_tree(&entry, new_prefix, tree, updated_files, created_files)?;
             } else if entry.extension().and_then(|ext| ext.to_str()) == Some("rs") {
                 let file_name = entry
                     .file_name()
                     .ok_or_else(|| anyhow!("Missing directory name"))?
-                    .to_string_lossy();
-                let file_name = format_file(&file_name, updated_files, created_files)
-                    .bold()
+                    .to_string_lossy()
                     .to_string();
-                output.push_str(&format!(
+                let file_name = format_file(file_name, updated_files, created_files).bold();
+                tree.push_str(&format!(
                     "{}{} {}\n",
                     prefix,
                     if is_last { "└──" } else { "├──" },
