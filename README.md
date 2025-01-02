@@ -27,7 +27,7 @@ cargo install --git https://github.com/jeermuce/modtree
 
 ## Usage
 
-Basic usage with default settings:
+Basic usage with default settings, compile it and put it in your .cargo/bin directory or path:
 ```
 modtree
 ```
