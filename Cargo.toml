@@ -12,3 +12,30 @@ colored = "2.2.0"
 [[bin]]
 name = "modtree"
 path = "src/main.rs"
+
+[profile.dev]
+opt-level = 0                # No optimization to prioritize compilation speed.
+debug = 1                    # Include debug information for better debugging.
+split-debuginfo = "unpacked" # Unpack debug info for easier access.
+strip = "none"               # Don't remove symbols or debug info for complete debugging.
+debug-assertions = true      # Enable debug assertions to catch more bugs.
+overflow-checks = true       # Enable runtime integer overflow checks for safety.
+lto = false                  # Disable link-time optimization to speed up build times.
+panic = "unwind"             # Use unwind strategy for better debugging.
+incremental = true           # Enable incremental compilation to improve build speed.
+codegen-units = 32           # Higher number of codegen units to speed up compile time.
+rpath = false                # Don't set rpath linking option to keep it simple.
+#codegen-backend = "cranelift" # Use cranelift as the codegen backend for faster compilation, for non wasm
+
+[profile.release]
+opt-level = 3              # Optimize for performance
+debug = false              # Exclude debug information to reduce binary size.
+split-debuginfo = "packed" # Pack debug info to keep size smaller.
+strip = "symbols"          # Remove symbols to reduce binary size.
+debug-assertions = false   # Disable debug assertions for better performance.
+overflow-checks = true     # Disable overflow checks to optimize performance.
+lto = "fat"                # Enable link-time optimization for performance.
+panic = "abort"            # Use abort strategy for reduced binary size.
+incremental = false        # Disable incremental compilation for optimal performance.
+codegen-units = 1          # Single codegen unit for better optimization.
+rpath = false              # Don't set rpath linking option to keep it simple.
